@@ -20,6 +20,7 @@ void Terrain::initPhysicsBody() {
 	auto body = PhysicsBody::createEdgeBox(this->getContentSize());
 	body->setGravityEnable(false); // Terrain cant afforded by gravity
 	body->setDynamic(false);
+	body->getShape(0)->setRestitution(0);
 	body->setCategoryBitmask(1);
 	body->setCollisionBitmask(15);
 	body->setContactTestBitmask(0);

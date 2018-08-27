@@ -29,7 +29,14 @@ bool Level1Scene::init()
 	ground->initSprite("HelloWorld.png");
 	ground->setPosition(Director::getInstance()->getVisibleSize().width/2 , 0);
 	ground->initPhysicsBody();
-	this->addChild(ground,0,0);
+	this->addChild(ground);
+
+	auto ground2 = Terrain::create();
+	ground2->initSprite("HelloWorld.png");
+	ground2->setPosition(ground->getPositionX() + ground->getContentSize().width , 
+		ground->getPositionY() + ground->getContentSize().height);
+	ground2->initPhysicsBody();
+	this->addChild(ground2);
 
 	auto hero = Hero::create("Hero");
 	hero->initSprite("YanMo.png");
@@ -40,7 +47,7 @@ bool Level1Scene::init()
 	JoyStick* rocker = JoyStick::create();
 	rocker->setPosition(Point::ZERO);
 	rocker->setHero(hero);
-	addChild(rocker, 99, TAG_ROCKER);
+	addChild(rocker, 99);
 
 	auto spriteBoom = Sprite::create("CloseSelected.png");
 	auto menuItemBoom = MenuItemSprite::create(spriteBoom, spriteBoom, [=](Ref *){

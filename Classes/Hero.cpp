@@ -40,9 +40,24 @@ bool Hero::init(std::string type) {
 void Hero::initPhysicsBody() {
 	auto body = PhysicsBody::createBox(this->getContentSize());
 	body->getShape(0)->setRestitution(0.0f);
-	body->getShape(0)->setFriction(100.0f);
+	body->getShape(0)->setFriction(0.0f);
+	body->setCategoryBitmask(2);
+	body->setContactTestBitmask(1);
+	body->setCollisionBitmask(1);
 	body->setRotationEnable(false);
 	this->setPhysicsBody(body);
+
+	EventListenerPhysicsContact* evListener = EventListenerPhysicsContact::create();
+	evListener->onContactBegin = [this] (PhysicsContact& contact) { return true;};
+	evListener->onContactPreSolve = [this] (PhysicsContact& contact, PhysicsContactPreSolve& presolve) {
+		this->actWalk(false, this->m_iWalking);
+		return true;
+	};
+	evListener->onContactSeperate = [this](PhysicsContact& contact){
+		//this->m_iWall = 0;
+		this->actWalk(true, this->m_iWalking);
+	};
+	tDirector->getEventDispatcher()->addEventListenerWithSceneGraphPriority(evListener, this);
 }
 
 bool Hero::initSprite(std::string name) {
