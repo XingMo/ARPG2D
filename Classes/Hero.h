@@ -39,13 +39,13 @@ public:
 	// set button continous pressed stat
 	void setWalking(bool,int);
 	int isWalking();
-	void setAttacking(bool);
-	bool isAttacking();
+	void setAttacking(bool,int);
+	int isAttacking();
 	
 	// set actual movement
 	void actJump();
 	void actWalk(bool, int);
-	void actAttack(bool);
+	void actAttack(bool, int);
 
 	// update only action func
 	void updateAction();
@@ -65,8 +65,8 @@ private:
 	int m_iActionStat; // current action
 	bool m_bOnGround; // is onGround
 	cocos2d::Vect m_vcWalkingVect; // walking vector
-	bool m_bAttacking; // attack button pressed
-	int m_iWalking;
+	int m_iAttacking; // attack button pressed
+	int m_iWalking; // attack button pressed
 	bool m_bDirection; // facing direction
 	
 	bool init(std::string); // init function

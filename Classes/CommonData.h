@@ -3,7 +3,7 @@
 
 #include "cocos2d.h"
 
-#define VISIBLE_SIZE (cocos2d::Director::getInstance()->getVisibleSize());
+#define VISIBLE_SIZE (cocos2d::Director::getInstance()->getVisibleSize())
 
 #define tDirector (cocos2d::Director::getInstance())
 #define tSpriteFrameCache (cocos2d::SpriteFrameCache::getInstance())

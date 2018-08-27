@@ -21,7 +21,6 @@ bool Level1Scene::init()
 {
     if ( !Layer::init() ){ return false; }
 
-
 	tSpriteFrameCache->addSpriteFramesWithFile("HelloWorld.png");
 	tSpriteFrameCache->addSpriteFramesWithFile("CloseNormal.png");
 	tSpriteFrameCache->addSpriteFramesWithFile("asd.plist");
@@ -38,6 +37,8 @@ bool Level1Scene::init()
 	hero->initPhysicsBody();
 	this->addChild(hero);
 
+	
+
 	typedef EventKeyboard::KeyCode KeyCode;
 	auto kbListener = EventListenerKeyboard::create();
 	kbListener->onKeyPressed = [=](KeyCode code, Event* event){
@@ -50,6 +51,10 @@ bool Level1Scene::init()
 			break;
 		case KeyCode::KEY_UP_ARROW:
 			hero->actJump();
+			break;
+		case KeyCode::KEY_Z:
+			CCLOG("z pressed\n");
+			hero->setAttacking(true, 1);
 			break;
 		default:
 			break;
@@ -64,6 +69,10 @@ bool Level1Scene::init()
 		case KeyCode::KEY_RIGHT_ARROW:
 			hero->setWalking(false, Hero::BTN_RIGHT);
 			break;
+		case KeyCode::KEY_Z:
+			CCLOG("z released\n");
+			hero->setAttacking(false, 1);
+			break;
 		default:
 			break;
 		}
@@ -73,4 +82,3 @@ bool Level1Scene::init()
 
     return true;
 }
-

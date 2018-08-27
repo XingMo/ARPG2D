@@ -28,7 +28,7 @@ bool Hero::init(std::string type) {
 	this->m_fHpt = 10.0f;
 	this->m_fAtk = 10.0f;
 	this->m_iActionStat = Hero::NORMAL;
-	this->m_bAttacking = false;
+	this->m_iAttacking = 0;
 	this->m_iWalking = 0;
 	this->m_bDirection = Hero::DIREC_LEFT;
 	this->m_vcWalkingVect = Vect(0,0);
@@ -54,12 +54,15 @@ bool Hero::initSprite(std::string name) {
 }
 
 void Hero::setWalking(bool stat, int btn) {
-	this->m_iWalking ^= btn;
-	CCLOG("stat:%d btn:%d iWalk:%d\n", stat, btn, m_iWalking);
+
+	if(stat) while(!(this->m_iWalking&btn)) this->m_iWalking ^= btn;
+	if(!stat) while(this->m_iWalking&btn) this->m_iWalking ^= btn;
+	//CCLOG("stat:%d btn:%d iWalk:%d\n", stat, btn, m_iWalking);
+	
 	if( stat ){
 		if(btn==Hero::BTN_LEFT) this->m_bDirection = Hero::DIREC_LEFT;
 		else this->m_bDirection = Hero::DIREC_RIGHT;
-		CCLOG("direc %s\n", stat?"Left":"Right");
+		//CCLOG("direc %s\n", stat?"Left":"Right");
 		this->setFlippedX(m_bDirection);
 	}
 	
@@ -70,9 +73,14 @@ int Hero::isWalking() {
 	return this->m_iWalking;
 }
 
-void Hero::setAttacking(bool b) { this->m_bAttacking = b; }
+void Hero::setAttacking(bool stat, int btn) {
+	//if(stat) while(!(this->m_iAttacking&btn)) this->m_iAttacking ^= btn;
+	//if(!stat) while(this->m_iAttacking&btn) this->m_iAttacking ^= btn;
+	if(stat) this->m_iAttacking = 1;
+	else this->m_iAttacking = 0;
+}
 
-bool Hero::isAttacking() {return this->m_bAttacking; }
+int Hero::isAttacking() { return this->m_iAttacking; }
 
 void Hero::actJump() {
 	if(!this->m_bOnGround) return;
@@ -102,8 +110,8 @@ void Hero::actWalk(bool b, int walkMask) {
 	m_walkMask = walkMask;
 }
 
-void Hero::actAttack(bool b){
-
+void Hero::actAttack(bool b, int){
+	// create Damage here
 }
 
 int Hero::getGroup() { return this->m_iGroup; }
@@ -161,7 +169,7 @@ void Hero::update(float) {
 	int oldStat = m_iActionStat;
 	m_iActionStat = Hero::NORMAL;
 	if(this->m_iWalking) m_iActionStat = Hero::WALK;
-	if(this->m_bAttacking) m_iActionStat = Hero::ATTACK;
+	if(this->m_iAttacking) m_iActionStat = Hero::ATTACK;
 	actionShiftFlag |= (oldStat!=m_iActionStat);
 	
 	// action update
@@ -173,6 +181,7 @@ void Hero::update(float) {
 	if(this->m_iWalking) {
 		if(!this->m_bOnGround) actWalk(true, m_iWalking);
 		else {
+			
 			if(this->m_iActionStat == Hero::WALK)
 				actWalk(true, m_iWalking);
 			else 
