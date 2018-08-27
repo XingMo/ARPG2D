@@ -40,9 +40,24 @@ bool Hero::init(std::string type) {
 void Hero::initPhysicsBody() {
 	auto body = PhysicsBody::createBox(this->getContentSize());
 	body->getShape(0)->setRestitution(0.0f);
-	body->getShape(0)->setFriction(100.0f);
+	body->getShape(0)->setFriction(0.0f);
+	body->setCategoryBitmask(2);
+	body->setContactTestBitmask(1);
+	body->setCollisionBitmask(1);
 	body->setRotationEnable(false);
 	this->setPhysicsBody(body);
+
+	EventListenerPhysicsContact* evListener = EventListenerPhysicsContact::create();
+	evListener->onContactBegin = [this] (PhysicsContact& contact) { return true;};
+	evListener->onContactPreSolve = [this] (PhysicsContact& contact, PhysicsContactPreSolve& presolve) {
+		this->actWalk(false, this->m_iWalking);
+		return true;
+	};
+	evListener->onContactSeperate = [this](PhysicsContact& contact){
+		//this->m_iWall = 0;
+		this->actWalk(true, this->m_iWalking);
+	};
+	tDirector->getEventDispatcher()->addEventListenerWithSceneGraphPriority(evListener, this);
 }
 
 bool Hero::initSprite(std::string name) {
@@ -55,16 +70,15 @@ bool Hero::initSprite(std::string name) {
 
 void Hero::setWalking(bool stat, int btn) {
 
-	if(stat) while(!(this->m_iWalking&btn)) this->m_iWalking ^= btn;
-	if(!stat) while(this->m_iWalking&btn) this->m_iWalking ^= btn;
+	if(stat) while(!(m_iWalking&btn)) m_iWalking ^= btn;
+	if(!stat) while(m_iWalking&btn) m_iWalking ^= btn;
 	//CCLOG("stat:%d btn:%d iWalk:%d\n", stat, btn, m_iWalking);
 	
-	if( stat ){
-		if(btn==Hero::BTN_LEFT) this->m_bDirection = Hero::DIREC_LEFT;
-		else this->m_bDirection = Hero::DIREC_RIGHT;
-		//CCLOG("direc %s\n", stat?"Left":"Right");
-		this->setFlippedX(m_bDirection);
-	}
+	if(m_iWalking&Hero::BTN_LEFT) m_bDirection = Hero::DIREC_LEFT;
+	if(m_iWalking&Hero::BTN_RIGHT) m_bDirection = Hero::DIREC_RIGHT;
+	if((m_iWalking&Hero::BTN_LEFT) && (m_iWalking&Hero::BTN_RIGHT))
+		m_bDirection = btn==Hero::BTN_LEFT ?  Hero::DIREC_LEFT : Hero::DIREC_RIGHT;
+	this->setFlippedX(m_bDirection);
 	
 }
 
@@ -89,27 +103,13 @@ void Hero::actJump() {
 }
 
 void Hero::actWalk(bool b, int walkMask) {
-	static bool m_isWalk = 0;
-	static int m_walkMask=0;
-	static Vect v;
-	if(b && this->getPhysicsBody()->getVelocity().x != this->m_vcWalkingVect.x) {
-		auto v = Point(this->m_vcWalkingVect.x, this->getPhysicsBody()->getVelocity().y);
-		this->getPhysicsBody()->setVelocity(v);
-		return;
-	}
-	if(b==m_isWalk && walkMask == m_walkMask) return;
-
-	v = this->getPhysicsBody()->getVelocity() - this->m_vcWalkingVect;
-	this->getPhysicsBody()->setVelocity(v);
-	this->m_vcWalkingVect = Vect(0,0);
+	Vect &v = this->m_vcWalkingVect;
+	v.x = 0;
 	if(b) {
-		if(this->m_iWalking & Hero::BTN_LEFT ) this->m_vcWalkingVect += Vect(-100,0);
-		if(this->m_iWalking & Hero::BTN_RIGHT ) this->m_vcWalkingVect += Vect(100,0);
-		v = this->getPhysicsBody()->getVelocity() + this->m_vcWalkingVect;
-		this->getPhysicsBody()->setVelocity(v);
+		if(walkMask & Hero::BTN_LEFT) v.x += -100;
+		if(walkMask & Hero::BTN_RIGHT) v.x += 100;
 	}
-	m_isWalk = b;
-	m_walkMask = walkMask;
+	this->getPhysicsBody()->setVelocity(Vect(v.x, this->getPhysicsBody()->getVelocity().y) );
 }
 
 void Hero::actAttack(bool b, int){
