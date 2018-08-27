@@ -40,7 +40,7 @@ bool Hero::init(std::string type) {
 void Hero::initPhysicsBody() {
 	auto body = PhysicsBody::createBox(this->getContentSize());
 	body->getShape(0)->setRestitution(0.0f);
-	body->getShape(0)->setFriction(0.0f);
+	body->getShape(0)->setFriction(100.0f);
 	body->setRotationEnable(false);
 	this->setPhysicsBody(body);
 }
@@ -92,19 +92,21 @@ void Hero::actWalk(bool b, int walkMask) {
 	static bool m_isWalk = 0;
 	static int m_walkMask=0;
 	static Vect v;
+	if(b && this->getPhysicsBody()->getVelocity().x != this->m_vcWalkingVect.x) {
+		auto v = Point(this->m_vcWalkingVect.x, this->getPhysicsBody()->getVelocity().y);
+		this->getPhysicsBody()->setVelocity(v);
+		return;
+	}
 	if(b==m_isWalk && walkMask == m_walkMask) return;
 
 	v = this->getPhysicsBody()->getVelocity() - this->m_vcWalkingVect;
 	this->getPhysicsBody()->setVelocity(v);
+	this->m_vcWalkingVect = Vect(0,0);
 	if(b) {
-		this->m_vcWalkingVect = Vect(0,0);
 		if(this->m_iWalking & Hero::BTN_LEFT ) this->m_vcWalkingVect += Vect(-100,0);
 		if(this->m_iWalking & Hero::BTN_RIGHT ) this->m_vcWalkingVect += Vect(100,0);
 		v = this->getPhysicsBody()->getVelocity() + this->m_vcWalkingVect;
 		this->getPhysicsBody()->setVelocity(v);
-	}
-	else {
-		this->m_vcWalkingVect = Vect(0,0);
 	}
 	m_isWalk = b;
 	m_walkMask = walkMask;
@@ -165,7 +167,7 @@ void Hero::update(float) {
 		this->m_bOnGround = true;
 		// on ground shift -> updateAction
 
-	// place in action priority
+	// execute in action priority
 	int oldStat = m_iActionStat;
 	m_iActionStat = Hero::NORMAL;
 	if(this->m_iWalking) m_iActionStat = Hero::WALK;
