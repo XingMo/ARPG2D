@@ -61,10 +61,17 @@ void Hero::initPhysicsBody() {
 }
 
 bool Hero::initSprite(std::string name) {
-	if( this->initWithSpriteFrameName(name) ){
+	SpriteFrame* spFrame = nullptr;
+	if( spFrame = tSpriteFrameCache->getSpriteFrameByName(name) ){
+		this->initWithSpriteFrame(spFrame);
 		this->setContentSize(this->getTextureRect().size);
 		return 1;
 	}
+	CCLOG("SpriteFrameName Fail");
+	//if( this->initWithFile(name) ){
+	//	this->setContentSize(this->getTextureRect().size);
+	//	return 1;
+	//}
 	return 0;
 }
 
@@ -78,7 +85,7 @@ void Hero::setWalking(bool stat, int btn) {
 	if(m_iWalking&Hero::BTN_RIGHT) m_bDirection = Hero::DIREC_RIGHT;
 	if((m_iWalking&Hero::BTN_LEFT) && (m_iWalking&Hero::BTN_RIGHT))
 		m_bDirection = btn==Hero::BTN_LEFT ?  Hero::DIREC_LEFT : Hero::DIREC_RIGHT;
-	this->setFlippedX(m_bDirection);
+	this->setFlippedX(!m_bDirection);
 	
 }
 
@@ -131,8 +138,10 @@ void Hero::updateAction() {
 	switch (this->m_iActionStat)
 	{
 	case Hero::NORMAL:
-		this->initWithSpriteFrameName("YanMo.png");
-		this->setFlippedX(m_bDirection);
+		anim->addSpriteFrame(tSpriteFrameCache->getSpriteFrameByName("hero1.png"));
+		anim->setDelayPerUnit(0.5f);
+		anim->setLoops(-1);
+		this->runAction(Animate::create(anim));
 		if(this->m_bOnGround){
 			//hero on ground normal
 		} else { 
@@ -140,8 +149,8 @@ void Hero::updateAction() {
 		}
 		break;
 	case Hero::WALK:
-		anim->addSpriteFrame(tSpriteFrameCache->getSpriteFrameByName("YanMo_DieandRun.png"));
-		anim->addSpriteFrame(tSpriteFrameCache->getSpriteFrameByName("YanMo.png"));
+		anim->addSpriteFrame(tSpriteFrameCache->getSpriteFrameByName("hero_run.png"));
+		anim->addSpriteFrame(tSpriteFrameCache->getSpriteFrameByName("hero1.png"));
 		anim->setDelayPerUnit(0.15f);
 		anim->setLoops(-1);
 		this->runAction(Animate::create(anim));

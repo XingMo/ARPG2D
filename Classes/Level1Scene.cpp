@@ -22,9 +22,10 @@ bool Level1Scene::init()
     if ( !Layer::init() ){ return false; }
 
 	tSpriteFrameCache->addSpriteFramesWithFile("asd.plist");
+	tSpriteFrameCache->addSpriteFramesWithFile("hero.plist");
 	tSpriteFrameCache->addSpriteFramesWithFile("HelloWorld.png");
 	tSpriteFrameCache->addSpriteFramesWithFile("CloseNormal.png");
-	
+
 	auto ground = Terrain::create();
 	ground->initSprite("HelloWorld.png");
 	ground->setPosition(Director::getInstance()->getVisibleSize().width/2 , 0);
@@ -39,8 +40,8 @@ bool Level1Scene::init()
 	this->addChild(ground2);
 
 	auto hero = Hero::create("Hero");
-	hero->initSprite("YanMo.png");
-	hero->setPosition(ground->getPositionX(), ground->getContentSize().height + 100);
+	hero->initSprite("hero1.png");
+	hero->setPosition(ground->getPositionX(), ground->getContentSize().height/2 + hero->getContentSize().height/2);
 	hero->initPhysicsBody();
 	this->addChild(hero, 0, 101);
 	
@@ -62,42 +63,42 @@ bool Level1Scene::init()
 	menu->setPosition(Point::ZERO);
 	this->addChild(menu, 99, 101);
 
-	//typedef EventKeyboard::KeyCode KeyCode;
-	//auto kbListener = EventListenerKeyboard::create();
-	//kbListener->onKeyPressed = [=](KeyCode code, Event* event){
-	//	//hero_lastPosition_1 = hero->getPositionX();
-	//	switch (code) {
-	//	case KeyCode::KEY_LEFT_ARROW:
-	//		hero->setWalking(true, Hero::BTN_LEFT);
-	//		break;
-	//	case KeyCode::KEY_RIGHT_ARROW:
-	//		hero->setWalking(true, Hero::BTN_RIGHT);
-	//		break;
-	//	case KeyCode::KEY_UP_ARROW:
-	//		hero->actJump();
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//};
+	typedef EventKeyboard::KeyCode KeyCode;
+	auto kbListener = EventListenerKeyboard::create();
+	kbListener->onKeyPressed = [=](KeyCode code, Event* event){
+		//hero_lastPosition_1 = hero->getPositionX();
+		switch (code) {
+		case KeyCode::KEY_LEFT_ARROW:
+			hero->setWalking(true, Hero::BTN_LEFT);
+			break;
+		case KeyCode::KEY_RIGHT_ARROW:
+			hero->setWalking(true, Hero::BTN_RIGHT);
+			break;
+		case KeyCode::KEY_UP_ARROW:
+			hero->actJump();
+			break;
+		default:
+			break;
+		}
+	};
 
-	//kbListener->onKeyReleased = [=](KeyCode code, Event* event){
-	//	//hero_lastPosition_2 = hero->getPositionX();
-	//	//Level1Scene::ScreenMove();
-	//	switch (code) {
-	//	case KeyCode::KEY_LEFT_ARROW:
-	//		hero->setWalking(false, Hero::BTN_LEFT);
-	//		break;
-	//	case KeyCode::KEY_RIGHT_ARROW:
-	//		hero->setWalking(false, Hero::BTN_RIGHT);
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//};
+	kbListener->onKeyReleased = [=](KeyCode code, Event* event){
+		//hero_lastPosition_2 = hero->getPositionX();
+		//Level1Scene::ScreenMove();
+		switch (code) {
+		case KeyCode::KEY_LEFT_ARROW:
+			hero->setWalking(false, Hero::BTN_LEFT);
+			break;
+		case KeyCode::KEY_RIGHT_ARROW:
+			hero->setWalking(false, Hero::BTN_RIGHT);
+			break;
+		default:
+			break;
+		}
+	};
 
 
-	//tDirector->getEventDispatcher()->addEventListenerWithSceneGraphPriority(kbListener, this);
+	tDirector->getEventDispatcher()->addEventListenerWithSceneGraphPriority(kbListener, this);
 
     return true;
 }
