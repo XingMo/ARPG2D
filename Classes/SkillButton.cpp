@@ -16,10 +16,10 @@ SkillButton::~SkillButton()
 
 }
 
-SkillButton* SkillButton::createSkillButton(float cdTime, const char* stencil_file_name, const char* button_normal_name, const char* button_click_name)
+SkillButton* SkillButton::createSkillButton(float cdTime, const char* stencil_file_name, const char* button_normal_name, const char* button_click_name, Skill_type type)
 {
 	SkillButton* skillButton = new SkillButton();
-	if (skillButton && skillButton->init(cdTime, stencil_file_name, button_normal_name, button_click_name))
+	if (skillButton && skillButton->init(cdTime, stencil_file_name, button_normal_name, button_click_name, type))
 	{
 		skillButton->autorelease();
 		return skillButton;
@@ -33,10 +33,19 @@ SkillButton* SkillButton::createSkillButton(float cdTime, const char* stencil_fi
 	return NULL;
 }
 
-bool SkillButton::init(float cdTime, const char* stencil_file_name, const char* button_normal_name, const char* button_click_name)
+bool SkillButton::init(float cdTime, const char* stencil_file_name, const char* button_normal_name, const char* button_click_name, Skill_type type)
 {
 	//在底层添加技能按钮
-	mItemSkill = CCMenuItemImage::create(button_normal_name, button_click_name, this, menu_selector(SkillButton::skillClickCallBack));
+	mItemSkill = MenuItemImage::create(button_normal_name, button_click_name, [=](Ref *){
+		//使用技能
+		switch (type){
+		case JUMP:
+			hero->actJump();
+			break;
+		default:
+			break;
+		}
+	});
 	mItemSkill->setPosition(CCPointZero);
 	mMenuSkill = CCMenu::create(mItemSkill, NULL);
 	mMenuSkill->setPosition(CCPointZero);
@@ -61,8 +70,6 @@ bool SkillButton::init(float cdTime, const char* stencil_file_name, const char* 
 
 void SkillButton::skillClickCallBack(cocos2d::CCObject* obj)
 {
-	//使用技能
-	hero->actJump();
 	//冷却计时
 	mItemSkill->setEnabled(false);
 	//显示蒙版
@@ -97,7 +104,7 @@ void SkillButton::setHero(Hero* h){
 
 //添加技能按钮
 //以下代码加入到场景的init
-//SkillButton* mSkillButton = SkillButton::createSkillButton(2.f, "Sprite-0008.png", "CloseNormal.png", "CloseSelected.png");
+//SkillButton* mSkillButton = SkillButton::createSkillButton(2.f, "Sprite-0008.png", "CloseNormal.png", "CloseSelected.png", JUMP);
 //mSkillButton->setHero(hero);
 //mSkillButton->setPosition(VISIBLE_SIZE.width * 2 / 3, VISIBLE_SIZE.height / 3);
 //addChild(mSkillButton);

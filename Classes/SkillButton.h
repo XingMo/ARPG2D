@@ -2,7 +2,10 @@
 #define _SKILLBUTTON_H_
 #include <cocos2d.h>
 #include "Hero.h"
-
+typedef enum
+{
+	JUMP,
+}Skill_type;
 class SkillButton : public cocos2d::CCNode
 {
 public:
@@ -12,7 +15,8 @@ public:
 	static SkillButton* createSkillButton(float cdTime,
 		const char* stencil_file_name,
 		const char* button_normal_name,
-		const char* button_click_name);
+		const char* button_click_name,
+		Skill_type type);
 
 	//技能CD预留接口
 	void setCDTime(float time) { mCDTime = time; }
@@ -28,7 +32,7 @@ public:
 	void setHero(Hero*);						
 
 private:
-	bool init(float cdTime, const char* stencil_file_name, const char* button_normal_name, const char* button_click_name);
+	bool init(float cdTime, const char* stencil_file_name, const char* button_normal_name, const char* button_click_name, Skill_type type);
 
 private:
 	cocos2d::CCMenuItemImage*   mItemSkill;     //技能按钮精灵
