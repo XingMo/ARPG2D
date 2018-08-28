@@ -43,6 +43,7 @@ public:
 	int isAttacking();
 	
 	// set actual movement
+	void resetAction();
 	void actJump();
 	void actWalk(bool, int);
 	void actAttack(bool, int);

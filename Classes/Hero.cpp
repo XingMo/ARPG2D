@@ -96,6 +96,10 @@ void Hero::setAttacking(bool stat, int btn) {
 
 int Hero::isAttacking() { return this->m_iAttacking; }
 
+void Hero::resetAction() {
+	this->m_iActionStat = Hero::NORMAL;
+}
+
 void Hero::actJump() {
 	if(!this->m_bOnGround) return;
 	Vect v = this->getPhysicsBody()->getVelocity() + Vect(0, 300);
@@ -150,6 +154,7 @@ void Hero::updateAction() {
 		break;
 	case Hero::ATTACK:
 		// play attack (cant move)
+		log("attacking");
 		break;
 	default:
 		break;
