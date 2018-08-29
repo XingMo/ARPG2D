@@ -3,16 +3,6 @@
 
 #include "cocos2d.h"
 
-typedef enum
-{
-	HELP,
-	MONSTER,
-	ABOUT,
-	EXIT,
-	START
-} MenuType;
-
-
 #define VISIBLE_SIZE (cocos2d::Director::getInstance()->getVisibleSize())
 
 #define tDirector (cocos2d::Director::getInstance())

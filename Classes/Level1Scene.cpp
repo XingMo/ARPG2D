@@ -21,10 +21,8 @@ bool Level1Scene::init()
 {
     if ( !Layer::init() ){ return false; }
 
-	tSpriteFrameCache->addSpriteFramesWithFile("asd.plist");
-	tSpriteFrameCache->addSpriteFramesWithFile("hero.plist");
 	tSpriteFrameCache->addSpriteFramesWithFile("HelloWorld.png");
-	tSpriteFrameCache->addSpriteFramesWithFile("CloseNormal.png");
+	tSpriteFrameCache->addSpriteFramesWithFile("Yaoganqiu.png");
 
 	auto ground = Terrain::create();
 	ground->initSprite("HelloWorld.png");
@@ -39,27 +37,37 @@ bool Level1Scene::init()
 	ground2->initPhysicsBody();
 	this->addChild(ground2);
 
-	auto hero = Hero::create("Hero");
-	hero->initSprite("hero1.png");
-	hero->setPosition(ground->getPositionX(), ground->getContentSize().height/2 + hero->getContentSize().height/2);
+	tSpriteFrameCache->addSpriteFramesWithFile("Boss.plist");
+	auto hero = Hero::create(-1);
+	hero->initSprite("boss_come1.png");
+	hero->setPosition(ground->getPositionX(), 
+		ground->getContentSize().height/2 + hero->getContentSize().height/2);
 	hero->initPhysicsBody();
+	hero->initSprite("boss1.png");
 	this->addChild(hero, 0, 101);
-	
-	JoyStick* rocker = JoyStick::create();
+
+	auto anim = Animation::create();
+	anim->addSpriteFrame(tSpriteFrameCache->getSpriteFrameByName("boss_wind1.png"));
+	anim->addSpriteFrame(tSpriteFrameCache->getSpriteFrameByName("boss_wind2.png"));
+	anim->addSpriteFrame(tSpriteFrameCache->getSpriteFrameByName("boss1.png"));
+	anim->setDelayPerUnit(0.2f);
+	anim->setLoops(-1);
+	hero->stopAllActions();
+	hero->runAction(Animate::create(anim));
+	/*JoyStick* rocker = JoyStick::create();
 	rocker->setPosition(Point::ZERO);
 	rocker->setHero(hero);
-	addChild(rocker, 99);
+	addChild(rocker, 99);*/
 
-	auto spriteBoom = Sprite::create("CloseSelected.png");
+	auto spriteBoom = Sprite::create("Yaoganqiu.png");
 	auto menuItemBoom = MenuItemSprite::create(spriteBoom, spriteBoom, [=](Ref *){
-		hero->actJump();
+		hero->kill();
 	});
 	menuItemBoom->setPosition(VISIBLE_SIZE.width*2 / 3, VISIBLE_SIZE.height / 3);
 	menuItemBoom->setAnchorPoint(Point::ANCHOR_MIDDLE_LEFT);
 
 	auto menu = Menu::create();
 	menu->addChild(menuItemBoom, 99, 100);
-	//Ä¬ÈÏ²Ëµ¥×ø±êÖÃÁã
 	menu->setPosition(Point::ZERO);
 	this->addChild(menu, 99, 101);
 
@@ -73,6 +81,9 @@ bool Level1Scene::init()
 			break;
 		case KeyCode::KEY_RIGHT_ARROW:
 			hero->setWalking(true, Hero::BTN_RIGHT);
+			break;
+		case KeyCode::KEY_Z:
+			hero->setAttacking(true, Hero::ACT_ATTACK);
 			break;
 		case KeyCode::KEY_UP_ARROW:
 			hero->actJump();
@@ -91,6 +102,9 @@ bool Level1Scene::init()
 			break;
 		case KeyCode::KEY_RIGHT_ARROW:
 			hero->setWalking(false, Hero::BTN_RIGHT);
+			break;
+		case KeyCode::KEY_Z:
+			hero->setAttacking(false, Hero::ACT_ATTACK);
 			break;
 		default:
 			break;

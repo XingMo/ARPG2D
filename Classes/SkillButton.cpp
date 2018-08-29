@@ -35,20 +35,20 @@ SkillButton* SkillButton::createSkillButton(float cdTime, const char* stencil_fi
 
 bool SkillButton::init(float cdTime, const char* stencil_file_name, const char* button_normal_name, const char* button_click_name)
 {
-	//Add skll button
+	//在底层添加技能按钮
 	mItemSkill = CCMenuItemImage::create(button_normal_name, button_click_name, this, menu_selector(SkillButton::skillClickCallBack));
 	mItemSkill->setPosition(CCPointZero);
 	mMenuSkill = CCMenu::create(mItemSkill, NULL);
 	mMenuSkill->setPosition(CCPointZero);
 	addChild(mMenuSkill, -100);
 
-	//Add shadow
+	//在中间层添加阴影模版
 	mStencil = CCSprite::create(stencil_file_name);
 	mStencil->setPosition(CCPointZero);
 	mStencil->setVisible(false);
 	addChild(mStencil);
 
-	//Add CD sprite
+	//在最上层添加旋转进度条精灵
 	CCSprite* progressSprite = CCSprite::create(button_normal_name);
 	mProgressTimer = CCProgressTimer::create(progressSprite);
 	mProgressTimer->setPosition(CCPointZero);
@@ -61,22 +61,18 @@ bool SkillButton::init(float cdTime, const char* stencil_file_name, const char* 
 
 void SkillButton::skillClickCallBack(cocos2d::CCObject* obj)
 {
-	//Use skill here
-	switch (m_SkillType){
-	case JUMP:
-		hero->actJump();
-		break;
-	default:
-		break;
-	}
-	//CD start
+	//使用技能
+	hero->actJump();
+	//冷却计时
 	mItemSkill->setEnabled(false);
+	//显示蒙版
 	mStencil->setVisible(true);
 
+	//设置精灵进度条为顺时针
 	mProgressTimer->setVisible(true);
 	mProgressTimer->setType(kCCProgressTimerTypeRadial);
 
-	//CD action
+	//技能冷却动画
 	CCActionInterval* action_progress_to = CCProgressTo::create(mCDTime, 100);
 	CCCallFunc* action_callback = CCCallFuncN::create(this, callfuncN_selector(SkillButton::skillCoolDownCallBack));
 	mProgressTimer->runAction(CCSequence::create(action_progress_to, action_callback, NULL));
@@ -84,18 +80,24 @@ void SkillButton::skillClickCallBack(cocos2d::CCObject* obj)
 
 void SkillButton::skillCoolDownCallBack(CCNode* node)
 {
-	//CD over
+	//冷却结束后将各种冷却时的精灵隐藏
+	//蒙板不可见
 	mStencil->setVisible(false);
 
+	//进度条精灵不可见
 	mProgressTimer->setVisible(false);
 
-	//Skill become enable
+	//技能按钮变为可用状态
 	mItemSkill->setEnabled(true);
 }
 
 void SkillButton::setHero(Hero* h){
 	this->hero = h;
 }
-void SkillButton::setSkill(Skill_type type){
-	m_SkillType = type;
-}
+
+//添加技能按钮
+//以下代码加入到场景的init
+//SkillButton* mSkillButton = SkillButton::createSkillButton(2.f, "Sprite-0008.png", "CloseNormal.png", "CloseSelected.png");
+//mSkillButton->setHero(hero);
+//mSkillButton->setPosition(VISIBLE_SIZE.width * 2 / 3, VISIBLE_SIZE.height / 3);
+//addChild(mSkillButton);

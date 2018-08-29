@@ -44,13 +44,9 @@ public:
 
 	bool initSprite(std::string);
 
-	int getDirection();
-
 	//group (assit damage judging)
 	int getGroup();
 	void setGroup(int);
-
-	int getType();
 	
 	// damage helper
 	void causeDamage(float);
