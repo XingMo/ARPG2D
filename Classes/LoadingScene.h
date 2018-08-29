@@ -10,5 +10,6 @@ public:
 	static Scene * createScene();
 	bool init();
 	CREATE_FUNC(LoadingScene);
+
 };
 #endif

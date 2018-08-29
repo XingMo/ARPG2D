@@ -2,11 +2,12 @@
 #define __TERRAIN_H__
 
 #include "cocos2d.h"
+USING_NS_CC;
 
 class Terrain : public cocos2d::Sprite {
 public:
 	
-	static bool Terrain::loadResources(); // resource loader, carried once
+	static bool loadResources(); // resource loader, carried once
 	
 	CREATE_FUNC(Terrain);
 
@@ -14,11 +15,14 @@ public:
 
 	bool initSprite(std::string);
 
+	//to add physicsBody to area
+	void initAreaPhysicsBody(Point,Point );
+
 private:
 
 	std::string m_sType; // Terrain type
 
-	bool Terrain::init();
+	bool init();
 };
 
 #endif
