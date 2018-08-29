@@ -12,4 +12,11 @@
 namespace Setting{
 };
 
+namespace PhysicsMask{
+	static const int terrain=1;
+	static const int hero=2;
+	static const int damage=4;
+	static const int item=8;
+};
+
 #endif
