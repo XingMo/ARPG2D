@@ -61,6 +61,10 @@ bool Hero::initSprite(std::string name) {
 	return 0;
 }
 
+int Hero::getDirection() {
+	return this->m_bDirection;
+}
+
 void Hero::setWalking(bool stat, int btn) {
 
 	if(stat) while(!(m_iWalking&btn)) m_iWalking ^= btn;
@@ -134,11 +138,15 @@ int Hero::getGroup() { return this->m_iGroup; }
 
 void Hero::setGroup(int group) { this->m_iGroup = group; }
 
+int Hero::getType() {
+	return this->m_sType;
+}
+
 void Hero::causeDamage(float d) {
 	this->m_fHpt -= d;
-	if(this->isDead()) {
+	/*if(this->isDead()) {
 		this->kill();
-	}
+	}*/
 }
 
 bool Hero::isDead() { return this->m_fHpt < 0.1f; }
@@ -150,14 +158,14 @@ void Hero::kill() {
 	auto callFun = CallFunc::create([=]{
 		// death 
 		// get into gameover scene
-		//this->removeFromParentAndCleanup(true);
+		this->removeFromParentAndCleanup(true);
 	});
 	auto action = Animate::create(
 		tAnimationCache->getAnimation(
 			StringUtils::format("Death_%d", this->m_sType)
 		)
 	);
-	this->runAction( Sequence::create( action, callFun, nullptr));
+	this->runAction(Sequence::create(action, callFun, nullptr));
 }
 
 void Hero::updateAction() {
