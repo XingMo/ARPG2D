@@ -41,7 +41,7 @@ void MapSwitcher::init() {
 	this->hero->setScale(0.25f);
 	this->hero->retain();
 	
-	// °´¼ü¼àÌý
+	// KeyboardListener
 	typedef EventKeyboard::KeyCode KeyCode;
 	KBListener = EventListenerKeyboard::create();
 	KBListener->onKeyPressed = [&](KeyCode code, Event* event){
@@ -78,7 +78,7 @@ void MapSwitcher::init() {
 	};
 	tDirector->getEventDispatcher()->addEventListenerWithFixedPriority(KBListener, -1000000);
 
-	//Ìí¼ÓÒ¡¸Ë
+	// 
 	this->rocker = JoyStick::create();
 	this->rocker->setPosition(Point::ZERO);
 	this->rocker->setHero(this->hero);
